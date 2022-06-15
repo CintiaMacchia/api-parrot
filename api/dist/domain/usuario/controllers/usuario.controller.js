@@ -14,65 +14,89 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UsuarioController = void 0;
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
-const services_1 = require("../services");
+const { Users } = require("../models");
 exports.UsuarioController = {
-    create(req, res) {
+    createUser(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const newUsuario = yield services_1.usuarioService.registerUsuario(req.body);
-                return res.status(201).json(newUsuario);
-            }
-            catch (error) {
-                return res.status(500).json(error);
-            }
-        });
-    },
-    update(req, res) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const { id } = req.params;
-                const { nome } = req.body;
-                const { senha } = req.body;
-                const { email } = req.body;
-                const { endereco } = req.body;
-                const usuarioUpdate = {};
-                Object.assign(usuarioUpdate, req.body);
-                if (senha) {
-                    const newSenha = bcryptjs_1.default.hashSync(senha, 10);
-                    Object.assign(usuarioUpdate, { senha: newSenha });
-                }
-                yield Usuarios.update(usuarioUpdate, {
-                    where: { id },
+                const { nome, email, password, apto } = req.body;
+                if (!nome || !email || !password || !apto)
+                    return res.status(400).json({
+                        message: 'Todas as informações são obrigatórias!'
+                    });
+                const newPassword = bcryptjs_1.default.hashSync(password, 10);
+                const newUser = yield Users.create({
+                    nome,
+                    email,
+                    password: newPassword,
+                    apto,
                 });
-                const usuario = yield Usuarios.findByPk(id);
-                return res.status(200).json(usuario);
+                res.json(newUser);
             }
             catch (error) {
-                return res.status(500).json("Nao foi possivel atualizar os dados do Usuario!");
+                res.json('Não foi possível cadastrar o usuário');
+                console.error(error);
             }
         });
     },
-    delete(req, res) {
+    updateUser(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const { id } = req.params;
-                yield Usuarios.destroy({
+                const { nome, email, apto, password } = req.body;
+                const existId = yield Users.count({
                     where: {
-                        id,
-                    },
+                        user_id: id
+                    }
                 });
-                return res.sendStatus(204);
+                if (!existId) {
+                    return res.status(400).json('Usuário não encontrado');
+                }
+                const updatedUser = yield Users.update({ nome, email, apto, password }, {
+                    where: {
+                        user_id: id,
+                    }
+                });
+                res.json(updatedUser);
+                res.status(201).json('Dados atualizados com sucesso');
             }
             catch (error) {
-                return res.status(500).json("Nao foi possivel deletar o Usario!");
+                res.status(404).json('Verfique os dados e tente novamente');
+                console.error(error);
+            }
+            ;
+        });
+    },
+    deleteUser(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { id } = req.params;
+                const existIdUser = yield Users.count({
+                    where: {
+                        user_id: id
+                    }
+                });
+                if (!existIdUser) {
+                    return res.status(400).json('Usuário não encontrado');
+                }
+                yield Users.destroy({
+                    where: {
+                        user_id: id
+                    }
+                });
+                res.status(201).json('Usuário deletado com sucesso');
+            }
+            catch (error) {
+                res.json('Falha ao deletar usuário');
+                console.error(error);
             }
         });
     },
-    getAll(req, res) {
+    getAllUsers(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const usuarios = yield Usuarios.findAll();
-                return res.json(usuarios);
+                const listaUsuarios = yield Users.findAll();
+                return res.status(201).json(listaUsuarios);
             }
             catch (error) {
                 console.log(error);
@@ -80,11 +104,11 @@ exports.UsuarioController = {
             }
         });
     },
-    getOne(req, res) {
+    getOneUser(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const { id } = req.params;
-                const usuario = yield Usuarios.findByPk(id);
+                const usuario = yield Users.findByPk(id);
                 return res.json(usuario);
             }
             catch (error) {

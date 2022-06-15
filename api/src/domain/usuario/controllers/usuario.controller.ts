@@ -1,81 +1,113 @@
-// import { Usuarios } from "../models/usuarios"; 
-import { Request, Response} from "express";
+import { Request, Response } from "express";
 import bcrypt from "bcryptjs";
-import { usuarioService } from "../services";
+
+const { Users } = require("../models")
 
 export const UsuarioController = {
-    async create(req: Request, res: Response) {
-      try {
-        const newUsuario = await usuarioService.registerUsuario(req.body);
-        
-        return res.status(201).json(newUsuario);
-      } catch (error) {
-        return res.status(500).json(error);
-      }
-    },
-  
-    async update(req: Request, res: Response) {
-      try {
-        const { id } = req.params;
-        const { nome } = req.body;
-        const { senha } = req.body;
-        const { email } = req.body;
-        const { endereco } = req.body;
-        const usuarioUpdate = {};
-  
-        Object.assign(usuarioUpdate, req.body);
-  
-        if (senha) {
-          const newSenha = bcrypt.hashSync(senha, 10);
-          Object.assign(usuarioUpdate, { senha: newSenha });
+  async createUser(req: Request, res: Response) {
+    try {
+      const { nome, email, password, apto} = req.body;
+
+      if (!nome || !email || !password || !apto)
+        return res.status(400).json({
+          message: 'Todas as informações são obrigatórias!'
+        })
+      const newPassword = bcrypt.hashSync(password, 10)
+      const newUser = await Users.create({
+        nome,
+        email,
+        password: newPassword,
+        apto,
+      });
+
+      res.json(newUser);
+    } 
+    
+    catch (error) {
+      res.json('Não foi possível cadastrar o usuário');
+      console.error(error);
+    }
+  },
+
+  async updateUser(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+      const { nome, email, apto, password} = req.body;
+
+      const existId = await Users.count({
+        where: {
+          user_id: id
         }
-  
-        await Usuarios.update(usuarioUpdate, {
-          where: { id },
-        });
-  
-        const usuario = await Usuarios.findByPk(id);
-  
-        return res.status(200).json(usuario);
-      } catch (error) {
-        return res.status(500).json("Nao foi possivel atualizar os dados do Usuario!");
+      });
+
+      if (!existId) {
+        return res.status(400).json('Usuário não encontrado');
       }
-    },
-    async delete(req: Request, res: Response) {
-      try {
-        const { id } = req.params;
-          
-        await Usuarios.destroy({
-          where: {
-            id,
-          },
-        });
-  
-        return res.sendStatus(204);
-      } catch (error) {
-        return res.status(500).json("Nao foi possivel deletar o Usario!");
+
+      const updatedUser = await Users.update({ nome, email, apto, password}, {
+        where: {
+          user_id: id,
+        }
+      });
+
+      res.json(updatedUser)
+      res.status(201).json('Dados atualizados com sucesso');
+    } 
+
+    catch (error) {
+      res.status(404).json('Verfique os dados e tente novamente');
+      console.error(error);
+    };
+  },
+
+  async deleteUser(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+
+      const existIdUser = await Users.count({
+        where: {
+          user_id: id
+        }
+      });
+
+      if (!existIdUser) {
+        return res.status(400).json('Usuário não encontrado');
       }
-    },
-    async getAll(req: Request, res: Response) {
-      try {
-        const usuarios = await Usuarios.findAll();
-  
-        return res.json(usuarios);
-      } catch (error) {
-        console.log(error);
-        return res.status(500).json("Algo deu errado ao tentar listar os Usuarios!");
-      }
-    },
-  
-    async getOne(req: Request, res: Response) {
-      try {
-        const { id } = req.params;
-        const usuario = await Usuarios.findByPk(id);
-  
-        return res.json(usuario);
-      } catch (error) {
-        return res.status(500).json("Algo errado aconteceu ao tentar listar este Usuario!");
-      }
-    },
-  };
-  
+
+      await Users.destroy({
+        where: {
+          user_id: id
+        }
+      });
+
+      res.status(201).json('Usuário deletado com sucesso');
+    } 
+
+    catch (error) {
+      res.json('Falha ao deletar usuário')
+      console.error(error);
+    }
+  },
+
+  async getAllUsers(req: Request, res: Response) {
+    try {
+      const listaUsuarios = await Users.findAll();
+      return res.status(201).json(listaUsuarios);
+    } 
+    catch (error) {
+      console.log(error);
+      return res.status(500).json("Algo deu errado ao tentar listar os Usuarios!");
+    }
+  },
+
+  async getOneUser(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+      const usuario = await Users.findByPk(id);
+
+      return res.json(usuario);
+    } catch (error) {
+      return res.status(500).json("Algo errado aconteceu ao tentar listar este Usuario!");
+    }
+  },
+};

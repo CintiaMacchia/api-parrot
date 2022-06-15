@@ -10,57 +10,62 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PostController = void 0;
+const { Posts } = require('../models');
 exports.PostController = {
-    create(req, res) {
+    createPost(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const { texto } = req.params;
-                const newPost = yield yield Posts.create(Object.assign(Object.assign({}, req.params), { texto }));
-                return res.status(201).json(newPost);
+                const { user_id, content } = req.body;
+                if (!user_id || !content)
+                    return res.status(400).json({
+                        message: 'Id de usuário e conteúdo são obrigatórios!'
+                    });
+                const newPost = yield Posts.create({
+                    user_id,
+                    content
+                });
+                res.json(newPost);
             }
             catch (error) {
-                return res.status(500).json("Nao foi possivel criar o Post!");
+                res.json('Não foi possível publicar');
+                console.error(error);
             }
         });
     },
-    delete(req, res) {
+    deletePost(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const { id } = req.params;
+                const existIdPost = yield Posts.count({
+                    where: {
+                        post_id: id
+                    }
+                });
+                if (!existIdPost) {
+                    return res.status(400).json('Post não encontrado');
+                }
                 yield Posts.destroy({
                     where: {
-                        id,
-                    },
+                        post_id: id
+                    }
                 });
-                return res.sendStatus(204);
+                res.status(201).json('Post deletado com sucesso');
             }
             catch (error) {
-                return res.status(500).json("Nao foi possivel deletar o Post!");
+                res.json('Não foi possível deletar o Post');
+                console.error(error);
             }
         });
     },
-    getAll(req, res) {
+    getAllPosts(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const usuarios = yield Posts.findAll();
-                return res.json(usuarios);
+                const listPosts = yield Posts.findAll();
+                res.status(201).json(listPosts);
             }
             catch (error) {
-                console.log(error);
-                return res.status(500).json("Algo deu errado ao tentar listar os Posts!");
-            }
-        });
-    },
-    getAllByUser(req, res) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const { id } = req.params;
-                const usuario = yield Usuarios.findByPk(id);
-                const posts = yield Posts.getall();
-                return res.json(posts);
-            }
-            catch (error) {
-                return res.status(500).json("Algo errado aconteceu ao tentar listar os Posts desse Usuario!");
+                res.json('Falha ao listar os posts');
+                console.error(error);
             }
         });
     },

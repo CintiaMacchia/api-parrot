@@ -1,58 +1,69 @@
-// import { Posts } from ""; 
 import { Request, Response } from "express";
-import bcrypt from "bcryptjs";
+const { Posts } = require('../models')
 
 export const PostController = {
-    async create(req: Request, res: Response) {
+    async createPost(req: Request, res: Response) {
         try {
-            const { texto } = req.params;
+            const {user_id, content } = req.body;
 
-            const newPost = await await Posts.create({
-                ...req.params,
-                texto,
+            if (!user_id || !content)
+                return res.status(400).json({
+                    message: 'Id de usuário e conteúdo são obrigatórios!'
+                })
+            const newPost = await Posts.create({
+                user_id,
+                content
             });
 
-            return res.status(201).json(newPost);
-        } catch (error) {
-            return res.status(500).json("Nao foi possivel criar o Post!");
+            res.json(newPost);
+        }
+
+        catch (error) {
+            res.json('Não foi possível publicar');
+            console.error(error);
+
         }
     },
 
-    async delete(req: Request, res: Response) {
+    async deletePost(req: Request, res: Response) {
         try {
             const { id } = req.params;
+
+            const existIdPost = await Posts.count({
+                where: {
+                    post_id: id
+                }
+            });
+
+            if (!existIdPost) {
+                return res.status(400).json('Post não encontrado');
+            }
 
             await Posts.destroy({
                 where: {
-                    id,
-                },
+                    post_id: id
+                }
             });
 
-            return res.sendStatus(204);
-        } catch (error) {
-            return res.status(500).json("Nao foi possivel deletar o Post!");
+            res.status(201).json('Post deletado com sucesso');
+        }
+
+        catch (error) {
+            res.json('Não foi possível deletar o Post')
+            console.error(error);
         }
     },
-    async getAll(req: Request, res: Response) {
+
+    async getAllPosts(req: Request, res: Response) {
         try {
-            const usuarios = await Posts.findAll();
-
-            return res.json(usuarios);
-        } catch (error) {
-            console.log(error);
-            return res.status(500).json("Algo deu errado ao tentar listar os Posts!");
+            const listPosts = await Posts.findAll();
+            res.status(201).json(listPosts);
+        } 
+        
+        catch (error) {
+            res.json('Falha ao listar os posts');
+            console.error(error)
         }
     },
 
-    async getAllByUser(req: Request, res: Response) {
-        try {
-            const { id } = req.params;
-            const usuario = await Usuarios.findByPk(id);
-            const posts = await Posts.getall();
-
-            return res.json(posts);
-        } catch (error) {
-            return res.status(500).json("Algo errado aconteceu ao tentar listar os Posts desse Usuario!");
-        }
-    },
 };

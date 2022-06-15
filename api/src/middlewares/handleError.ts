@@ -1,7 +1,9 @@
 import { NextFunction, Request, Response } from 'express';
 import { ValidationError } from 'express-validation';
 
-export default function (
+
+
+function handleError(
   err: Error,
   req: Request,
   res: Response,
@@ -12,3 +14,5 @@ export default function (
   }
   return res.status(500).json(err);
 }
+
+module.exports = handleError

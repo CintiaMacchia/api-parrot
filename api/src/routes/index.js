@@ -1,0 +1,14 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const usuario_controller_1 = require("../domain/usuario/controllers/usuario.controller");
+const express = require("express");
+const routes = express.Router();
+routes.post("/usuarios", usuario_controller_1.UsuarioController.create);
+routes.get("/usuarios", usuario_controller_1.UsuarioController.getAll);
+routes.get("/usuarios:id", usuario_controller_1.UsuarioController.getOne);
+routes.put("/usuarios:id", usuario_controller_1.UsuarioController.update);
+routes.delete("/usuarios:id", usuario_controller_1.UsuarioController.delete);
+routes.post("/posts", usuario_controller_1.UsuarioController.create);
+routes.get("/posts", usuario_controller_1.UsuarioController.getAll);
+routes.get("/posts:id", usuario_controller_1.UsuarioController.getOne);
+routes.delete("/posts:id", usuario_controller_1.UsuarioController.delete);

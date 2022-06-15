@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import bcrypt from "bcryptjs";
 
-const { Users } = require("../models")
+const Users = require('.,/')
 
 export const UsuarioController = {
   async createUser(req: Request, res: Response) {
@@ -25,6 +25,7 @@ export const UsuarioController = {
     
     catch (error) {
       res.json('Não foi possível cadastrar o usuário');
+      console.log(error)
       console.error(error);
     }
   },

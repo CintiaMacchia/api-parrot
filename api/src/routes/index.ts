@@ -13,3 +13,4 @@ routes.post("/posts", UsuarioController.create)
 routes.get("/posts", UsuarioController.getAll)
 routes.get("/posts:id", UsuarioController.getOne)
 routes.delete("/posts:id", UsuarioController.delete)
+

@@ -1,53 +1,25 @@
-const { Model } = require('sequelize');
+const { Sequelize, DataTypes, Model } = require('sequelize');
 
-module.exports = (sequelize, DataTypes) => {
-  class Users extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
-    static associate(models) {
-      // define association here
-    }
-  }
-  Users.init({
-    id: DataTypes.INTEGER,
-    nome: DataTypes.STRING,
-    email: DataTypes.STRING,
-    apto: DataTypes.INTEGER,
-    password: DataTypes.STRING
-  }, {
-    sequelize,
-    modelName: 'Users',
-  });
-  return Users;
-}
+const sequelize = require('../../../infrastructure/database');
+class Users extends Model { }
 
-// 'use strict';
-// const {
-//   Model
-// } = require('sequelize');
-// module.exports = (sequelize, DataTypes) => {
-//   class Users extends Model {
-//     /**
-//      * Helper method for defining associations.
-//      * This method is not a part of Sequelize lifecycle.
-//      * The `models/index` file will call this method automatically.
-//      */
-//     static associate(models) {
-//       // define association here
-//     }
-//   }
-//   Users.init({
-//     id: DataTypes.INTEGER,
-//     nome: DataTypes.STRING,
-//     email: DataTypes.STRING,
-//     apto: DataTypes.INTEGER,
-//     password: DataTypes.STRING
-//   }, {
-//     sequelize,
-//     modelName: 'Users',
-//   });
-//   return Users;
-// };
+Users.init({
+  // Model attributes are defined here
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true
+  },
+  nome: DataTypes.STRING,
+  email: DataTypes.STRING,
+  apto: DataTypes.INTEGER,
+  password: DataTypes.STRING
+}, {
+  // Other model options go here
+  sequelize,
+  modelName: 'Users' // We need to choose the model name
+});
+// the defined model is the class itself
+console.log(Users === sequelize.models.Users); // true
+
+module.exports = Users;

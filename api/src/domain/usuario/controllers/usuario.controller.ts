@@ -16,7 +16,7 @@ export const UsuarioController = {
         })
       const newPassword = bcrypt.hashSync(password, 10)
       // console.log(nome);
-
+      
       const newUser = await Users.create({
         nome,
         email,

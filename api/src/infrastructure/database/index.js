@@ -4,7 +4,7 @@ const Sequelize = require("sequelize");
 
 const DB_NAME = process.env.DB_NAME;
 const DB_USER = process.env.DB_USER;
-const DB_PASS = "";
+const DB_PASS = process.env.DB_PASS;
 const DB_CONFIG = {
     dialect: process.env.DB_DIALECT,
     host: process.env.DB_HOST,
@@ -25,7 +25,7 @@ async function hasConnection() {
         console.log("Banco dados conectado!");
     } catch (error) {
         console.log(error)
-        console.error("Erro ao tentar se conectar ao banco de dados1");
+        console.error("Erro ao tentar se conectar ao banco de dados!");
     }
 }
 

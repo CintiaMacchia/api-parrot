@@ -14,23 +14,27 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UsuarioController = void 0;
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
-const { Users } = require("../models");
+const models = require('../models');
+const Users = require("../models");
 exports.UsuarioController = {
     createUser(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                console.log(Users);
                 const { nome, email, password, apto } = req.body;
                 if (!nome || !email || !password || !apto)
                     return res.status(400).json({
                         message: 'Todas as informações são obrigatórias!'
                     });
                 const newPassword = bcryptjs_1.default.hashSync(password, 10);
+                // console.log(nome);
                 const newUser = yield Users.create({
                     nome,
                     email,
                     password: newPassword,
                     apto,
                 });
+                // const jane = await User.create({ name: "Jane" })
                 res.json(newUser);
             }
             catch (error) {

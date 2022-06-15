@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import bcrypt from "bcryptjs";
 
-const Users = require('.,/')
+const Users = require('..models/')
 
 export const UsuarioController = {
   async createUser(req: Request, res: Response) {

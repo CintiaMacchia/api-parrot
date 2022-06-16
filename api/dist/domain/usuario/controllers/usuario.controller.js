@@ -14,8 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UsuarioController = void 0;
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
-const models = require('../models');
-const Users = require("../models");
+const Users = require('../models');
 exports.UsuarioController = {
     createUser(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -26,18 +25,17 @@ exports.UsuarioController = {
                         message: 'Todas as informações são obrigatórias!'
                     });
                 const newPassword = bcryptjs_1.default.hashSync(password, 10);
-                // console.log(nome);
                 const newUser = yield Users.create({
                     nome,
                     email,
                     password: newPassword,
                     apto,
                 });
-                // const jane = await User.create({ name: "Jane" })
                 res.json(newUser);
             }
             catch (error) {
                 res.json('Não foi possível cadastrar o usuário');
+                console.log(error);
                 console.error(error);
             }
         });

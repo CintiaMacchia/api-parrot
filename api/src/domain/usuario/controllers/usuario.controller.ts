@@ -1,8 +1,7 @@
 import { Request, Response } from "express";
 import bcrypt from "bcryptjs";
 
-const models = require('../models')
-const Users = require("../models")
+const Users = require('../models')
 
 export const UsuarioController = {
   async createUser(req: Request, res: Response) {
@@ -15,8 +14,6 @@ export const UsuarioController = {
           message: 'Todas as informações são obrigatórias!'
         })
       const newPassword = bcrypt.hashSync(password, 10)
-      // console.log(nome);
-      
       const newUser = await Users.create({
         nome,
         email,
@@ -24,13 +21,12 @@ export const UsuarioController = {
         apto,
       });
 
-      // const jane = await User.create({ name: "Jane" })
-
       res.json(newUser);
-    }
-
+    } 
+    
     catch (error) {
       res.json('Não foi possível cadastrar o usuário');
+      console.log(error)
       console.error(error);
     }
   },
@@ -86,7 +82,7 @@ export const UsuarioController = {
       });
 
       res.status(201).json('Usuário deletado com sucesso');
-    }
+    } 
 
     catch (error) {
       res.json('Falha ao deletar usuário')
@@ -98,7 +94,7 @@ export const UsuarioController = {
     try {
       const listaUsuarios = await Users.findAll();
       return res.status(201).json(listaUsuarios);
-    }
+    } 
     catch (error) {
       console.log(error);
       return res.status(500).json("Algo deu errado ao tentar listar os Usuarios!");

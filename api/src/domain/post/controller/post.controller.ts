@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-const { Posts } = require('../models')
+const { Posts } = require('../models');
 
 export const PostController = {
     async createPost(req: Request, res: Response) {

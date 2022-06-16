@@ -20,7 +20,6 @@ exports.UsuarioController = {
     createUser(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                console.log(Users);
                 const { nome, email, password, apto } = req.body;
                 if (!nome || !email || !password || !apto)
                     return res.status(400).json({
@@ -47,22 +46,21 @@ exports.UsuarioController = {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const { id } = req.params;
-                const { nome, email, apto, password } = req.body;
+                const { nome, email, password, apto } = req.body;
                 const existId = yield Users.count({
                     where: {
-                        user_id: id
+                        id: id,
                     }
                 });
                 if (!existId) {
                     return res.status(400).json('Usuário não encontrado');
                 }
-                const updatedUser = yield Users.update({ nome, email, apto, password }, {
+                const updatedUser = yield Users.update({ nome, email, password, apto }, {
                     where: {
-                        user_id: id,
+                        id: id,
                     }
                 });
-                res.json(updatedUser);
-                res.status(201).json('Dados atualizados com sucesso');
+                res.json({ details: updatedUser, message: 'Dados atualizados com sucesso' }).status(201);
             }
             catch (error) {
                 res.status(404).json('Verfique os dados e tente novamente');
@@ -77,7 +75,7 @@ exports.UsuarioController = {
                 const { id } = req.params;
                 const existIdUser = yield Users.count({
                     where: {
-                        user_id: id
+                        id: id
                     }
                 });
                 if (!existIdUser) {
@@ -85,7 +83,7 @@ exports.UsuarioController = {
                 }
                 yield Users.destroy({
                     where: {
-                        user_id: id
+                        id: id
                     }
                 });
                 res.status(201).json('Usuário deletado com sucesso');

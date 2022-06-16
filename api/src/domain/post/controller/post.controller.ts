@@ -10,6 +10,7 @@ export const PostController = {
                 return res.status(400).json({
                     message: 'Id de usuário e conteúdo são obrigatórios!'
                 })
+                
             const newPost = await Posts.create({
                 user_id,
                 content

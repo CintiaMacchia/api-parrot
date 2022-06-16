@@ -1,7 +1,9 @@
 const { Sequelize, DataTypes, Model } = require('sequelize');
 
 const sequelize = require('../../../infrastructure/database');
-class Users extends Model { }
+class Users extends Model {
+
+}
 
 Users.init({
   // Model attributes are defined here

@@ -14,31 +14,28 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UsuarioController = void 0;
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
-const models = require('../models');
-const Users = require("../models");
+const Users = require('../models');
 exports.UsuarioController = {
     createUser(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                console.log(Users);
                 const { nome, email, password, apto } = req.body;
                 if (!nome || !email || !password || !apto)
                     return res.status(400).json({
                         message: 'Todas as informações são obrigatórias!'
                     });
                 const newPassword = bcryptjs_1.default.hashSync(password, 10);
-                // console.log(nome);
                 const newUser = yield Users.create({
                     nome,
                     email,
                     password: newPassword,
                     apto,
                 });
-                // const jane = await User.create({ name: "Jane" })
                 res.json(newUser);
             }
             catch (error) {
                 res.json('Não foi possível cadastrar o usuário');
+                console.log(error);
                 console.error(error);
             }
         });
@@ -47,22 +44,21 @@ exports.UsuarioController = {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const { id } = req.params;
-                const { nome, email, apto, password } = req.body;
+                const { nome, email, password, apto } = req.body;
                 const existId = yield Users.count({
                     where: {
-                        user_id: id
+                        id: id,
                     }
                 });
                 if (!existId) {
                     return res.status(400).json('Usuário não encontrado');
                 }
-                const updatedUser = yield Users.update({ nome, email, apto, password }, {
+                const updatedUser = yield Users.update({ nome, email, password, apto }, {
                     where: {
-                        user_id: id,
+                        id: id,
                     }
                 });
-                res.json(updatedUser);
-                res.status(201).json('Dados atualizados com sucesso');
+                res.json({ details: updatedUser, message: 'Dados atualizados com sucesso' }).status(201);
             }
             catch (error) {
                 res.status(404).json('Verfique os dados e tente novamente');
@@ -77,7 +73,7 @@ exports.UsuarioController = {
                 const { id } = req.params;
                 const existIdUser = yield Users.count({
                     where: {
-                        user_id: id
+                        id: id
                     }
                 });
                 if (!existIdUser) {
@@ -85,7 +81,7 @@ exports.UsuarioController = {
                 }
                 yield Users.destroy({
                     where: {
-                        user_id: id
+                        id: id
                     }
                 });
                 res.status(201).json('Usuário deletado com sucesso');

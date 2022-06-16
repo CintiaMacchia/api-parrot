@@ -1,13 +1,12 @@
 import { Request, Response } from "express";
 import bcrypt from "bcryptjs";
 
-const models = require('../models')
-const Users = require("../models")
+const Users = require('../models')
 
 export const UsuarioController = {
   async createUser(req: Request, res: Response) {
     try {
-      console.log(Users)
+      
       const { nome, email, password, apto } = req.body;
 
       if (!nome || !email || !password || !apto)
@@ -15,8 +14,6 @@ export const UsuarioController = {
           message: 'Todas as informações são obrigatórias!'
         })
       const newPassword = bcrypt.hashSync(password, 10)
-      // console.log(nome);
-      
       const newUser = await Users.create({
         nome,
         email,
@@ -24,13 +21,12 @@ export const UsuarioController = {
         apto,
       });
 
-      // const jane = await User.create({ name: "Jane" })
-
       res.json(newUser);
-    }
-
+    } 
+    
     catch (error) {
       res.json('Não foi possível cadastrar o usuário');
+      console.log(error)
       console.error(error);
     }
   },
@@ -38,26 +34,25 @@ export const UsuarioController = {
   async updateUser(req: Request, res: Response) {
     try {
       const { id } = req.params;
-      const { nome, email, apto, password } = req.body;
+      const { nome, email, password, apto } = req.body;
 
       const existId = await Users.count({
         where: {
-          user_id: id
+          id: id,
         }
-      });
+      }); 
 
       if (!existId) {
         return res.status(400).json('Usuário não encontrado');
       }
 
-      const updatedUser = await Users.update({ nome, email, apto, password }, {
+      const updatedUser = await Users.update({ nome, email, password, apto }, {
         where: {
-          user_id: id,
+          id: id,
         }
       });
 
-      res.json(updatedUser)
-      res.status(201).json('Dados atualizados com sucesso');
+      res.json({details: updatedUser, message: 'Dados atualizados com sucesso'}).status(201);
     }
 
     catch (error) {
@@ -72,7 +67,7 @@ export const UsuarioController = {
 
       const existIdUser = await Users.count({
         where: {
-          user_id: id
+          id: id
         }
       });
 
@@ -82,12 +77,12 @@ export const UsuarioController = {
 
       await Users.destroy({
         where: {
-          user_id: id
+          id: id
         }
       });
 
       res.status(201).json('Usuário deletado com sucesso');
-    }
+    } 
 
     catch (error) {
       res.json('Falha ao deletar usuário')
@@ -99,7 +94,7 @@ export const UsuarioController = {
     try {
       const listaUsuarios = await Users.findAll();
       return res.status(201).json(listaUsuarios);
-    }
+    } 
     catch (error) {
       console.log(error);
       return res.status(500).json("Algo deu errado ao tentar listar os Usuarios!");
@@ -110,8 +105,8 @@ export const UsuarioController = {
     try {
       const { id } = req.params;
       const usuario = await Users.findByPk(id);
-
       return res.json(usuario);
+
     } catch (error) {
       return res.status(500).json("Algo errado aconteceu ao tentar listar este Usuario!");
     }

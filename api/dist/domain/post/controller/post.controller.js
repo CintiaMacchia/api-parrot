@@ -32,7 +32,7 @@ exports.PostController = {
             }
         });
     },
-    deletePost(req, res) {
+    deletePostByUser(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const { id, user_id } = req.params;

@@ -1,5 +1,6 @@
 import { UsuarioController } from "../domain/usuario/controllers/usuario.controller";
 import { PostController } from "../domain/post/controller/post.controller";
+import { authController } from "../domain/autenticacao/auth.controller";
 
 const express = require("express");
 const routes = express.Router();
@@ -13,6 +14,9 @@ routes.delete("/usuarios/:id", UsuarioController.deleteUser)
 routes.post("/posts", PostController.createPost)
 routes.get("/posts", PostController.getAllPosts)
 routes.get("/posts/:id", PostController.getAllPostsFromOneUser)
-routes.delete("/posts/:id/:user_id", PostController.deletePost)
+routes.delete("/posts/:id/:user_id", PostController.deletePostByUser)
+
+routes.post("/auth", authController.login)
+
 
 module.exports = routes;

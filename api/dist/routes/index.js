@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const usuario_controller_1 = require("../domain/usuario/controllers/usuario.controller");
 const post_controller_1 = require("../domain/post/controller/post.controller");
+const auth_controller_1 = require("../domain/autenticacao/auth.controller");
 const express = require("express");
 const routes = express.Router();
 routes.post("/usuarios", usuario_controller_1.UsuarioController.createUser);
@@ -12,5 +13,6 @@ routes.delete("/usuarios/:id", usuario_controller_1.UsuarioController.deleteUser
 routes.post("/posts", post_controller_1.PostController.createPost);
 routes.get("/posts", post_controller_1.PostController.getAllPosts);
 routes.get("/posts/:id", post_controller_1.PostController.getAllPostsFromOneUser);
-routes.delete("/posts/:id/:user_id", post_controller_1.PostController.deletePost);
+routes.delete("/posts/:id/:user_id", post_controller_1.PostController.deletePostByUser);
+routes.post("/auth", auth_controller_1.authController.login);
 module.exports = routes;

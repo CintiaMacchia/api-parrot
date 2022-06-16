@@ -26,7 +26,7 @@ export const PostController = {
         }
     },
 
-    async deletePost(req: Request, res: Response) {
+    async deletePostByUser(req: Request, res: Response) {
         try {
             const { id, user_id } = req.params;
 

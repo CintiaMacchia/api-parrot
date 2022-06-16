@@ -58,7 +58,7 @@ exports.UsuarioController = {
                         id: id,
                     }
                 });
-                res.json({ details: updatedUser, message: 'Dados atualizados com sucesso' }).status(201);
+                res.json({ message: 'Dados atualizados com sucesso' }).status(201);
             }
             catch (error) {
                 res.status(404).json('Verfique os dados e tente novamente');

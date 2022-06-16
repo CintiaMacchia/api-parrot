@@ -52,7 +52,7 @@ export const UsuarioController = {
         }
       });
 
-      res.json({details: updatedUser, message: 'Dados atualizados com sucesso'}).status(201);
+      res.json({message: 'Dados atualizados com sucesso'}).status(201);
     }
 
     catch (error) {

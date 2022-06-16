@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PostController = void 0;
-const { Posts } = require('../models');
+const Posts = require('../models');
 exports.PostController = {
     createPost(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -27,18 +27,19 @@ exports.PostController = {
                 res.json(newPost);
             }
             catch (error) {
-                res.json('Não foi possível publicar');
                 console.error(error);
+                res.json('Não foi possível publicar');
             }
         });
     },
     deletePost(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const { id } = req.params;
+                const { id, user_id } = req.params;
                 const existIdPost = yield Posts.count({
                     where: {
-                        post_id: id
+                        user_id: user_id,
+                        id: id
                     }
                 });
                 if (!existIdPost) {
@@ -46,7 +47,7 @@ exports.PostController = {
                 }
                 yield Posts.destroy({
                     where: {
-                        post_id: id
+                        id: id
                     }
                 });
                 res.status(201).json('Post deletado com sucesso');
@@ -61,6 +62,26 @@ exports.PostController = {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const listPosts = yield Posts.findAll();
+                res.status(201).json(listPosts);
+            }
+            catch (error) {
+                res.json('Falha ao listar os posts');
+                console.error(error);
+            }
+        });
+    },
+    getAllPostsFromOneUser(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { id } = req.params;
+                const listPosts = yield Posts.findAll({
+                    where: {
+                        user_id: id
+                    }
+                });
+                if (listPosts.length === 0) {
+                    return res.status(400).json('Usuario ainda nao fez posts');
+                }
                 res.status(201).json(listPosts);
             }
             catch (error) {

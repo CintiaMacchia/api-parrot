@@ -15,7 +15,10 @@ Users.init({
     nome: DataTypes.STRING,
     email: DataTypes.STRING,
     apto: DataTypes.INTEGER,
-    password: DataTypes.STRING
+    password: DataTypes.STRING,
+    admin: DataTypes.BOOLEAN,
+    createdAt: DataTypes.DATE,
+    update: DataTypes.DATE
 }, {
     // Other model options go here
     sequelize,

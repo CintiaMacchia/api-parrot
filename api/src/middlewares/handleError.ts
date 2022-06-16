@@ -4,15 +4,16 @@ import { ValidationError } from 'express-validation';
 
 
 function handleError(
-  err: Error,
+  error: Error,
   req: Request,
   res: Response,
   next: NextFunction
 ) {
-  if (err instanceof ValidationError) {
-    return res.status(err.statusCode).json(err);
+  if (error instanceof ValidationError) {
+    return res.status(error.statusCode).json(error);
   }
-  return res.status(500).json(err);
+  
+  return res.status(500).json(error);
 }
 
 module.exports = handleError

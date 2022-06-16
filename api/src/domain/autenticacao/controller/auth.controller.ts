@@ -2,8 +2,8 @@ import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
-const Users = require('../usuario/models');
-const secret = require('../../middlewares/auth');
+const Users = require('../../usuario/models');
+const secret = require('../../../config/secret');
 
 export const authController = {
   async login(req: Request, res: Response) {
@@ -32,10 +32,10 @@ export const authController = {
       const token = jwt.sign(
         {
           id: logUser.id,
-          nome: logUser.nome,
+          email: logUser.email,
           admin: logUser.admin,
         },
-        secret
+        secret.key
       );
 
       res.cookie('autenticacao', token);
